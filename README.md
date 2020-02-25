@@ -2,7 +2,7 @@ What is ts-lib-module?
 =====================
 It's an open-source project written in TypeScript.
 
-This project represents my standard library for all generic type definitions and patterns that I use in various other projects.
+This project represents my standard library for generic type definitions and patterns that I use in various other projects.
 
 [![Code Style: Google](https://img.shields.io/badge/code%20style-google-blueviolet.svg)](https://github.com/google/gts)
 
