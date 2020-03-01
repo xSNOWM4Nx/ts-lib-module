@@ -65,6 +65,9 @@ export abstract class Service implements IService {
     // Init fields
     this.onChangesSubscribers = [];
 
+    this.logger.info(`'${this.key}' is running.`);
+    this.updateState(ServiceStateEnumeration.Running);
+
     return createResponse<boolean>(true);
   };
 
@@ -72,6 +75,9 @@ export abstract class Service implements IService {
 
     // Dispose fields
     this.onChangesSubscribers = [];
+
+    this.logger.info(`${this.key} has stopped.`);
+    this.updateState(ServiceStateEnumeration.Stopped);
 
     return createResponse<boolean>(true);
   };
