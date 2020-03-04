@@ -6,7 +6,10 @@
       "DOM"
     ],
     "rootDir": ".",
-    "outDir": "build"
+    "outDir": "build",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext"
   },
   "include": [
     "src/**/*.ts",
