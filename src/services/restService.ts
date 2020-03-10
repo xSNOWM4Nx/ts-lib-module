@@ -8,7 +8,7 @@ export interface IRESTService extends IService {
   put: <T>(url: string, data: Object | string, init?: RequestInit) => Promise<IResponse<T>>;
   delete: <T>(url: string, data?: Object | number, init?: RequestInit) => Promise<IResponse<T>>;
   setAuthorization: (authorizationHeader: string) => void;
-}
+};
 
 export class RESTService extends Service implements IRESTService {
 
@@ -229,4 +229,4 @@ export class RESTService extends Service implements IRESTService {
       });
 
   };
-}
+};

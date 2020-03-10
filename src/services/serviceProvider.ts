@@ -1,4 +1,4 @@
-import { IService } from './abstractions';
+import { IService, Service } from './abstractions';
 import { ServiceKeys } from './constants';
 import { RESTService } from './restService';
 import { LogProvider, ILogger } from './../logging';
@@ -65,7 +65,13 @@ export class ServiceProvider implements IServiceProvider {
     this.logger.info(`Starting services.`);
 
     const serviceStartPromises: Promise<IResponse<boolean>>[] = [];
-    Object.entries(this.serviceDictionary).forEach(([key, value]) => serviceStartPromises.push(value.start()));
+    Object.entries(this.serviceDictionary).forEach(([key, value]) => {
+
+      var service = value as Service;
+      service.injectServiceProvider(this);
+
+      serviceStartPromises.push(value.start())
+    });
 
     const serviceStartResponses = await Promise.all(serviceStartPromises);
     const failedServices = serviceStartResponses.filter(r => r.state === ResponseStateEnumeration.Error);

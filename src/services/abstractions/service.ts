@@ -1,6 +1,7 @@
 import { LogProvider, ILogger } from './../../logging';
 import { ILocalizableContent, LocalizationNamespaces } from './../../i18n';
 import { IResponse, ResponseStateEnumeration, createResponse } from './../../communication';
+import { IServiceProvider } from './../serviceProvider';
 
 export enum ServiceStateEnumeration {
   Unknown,
@@ -34,6 +35,7 @@ export abstract class Service implements IService {
   private version: number;
   private onChangesSubscribers: Array<(version: number, reason: string, serviceKey: string) => void>;
   protected logger: ILogger;
+  protected serviceProvider?: IServiceProvider;
   protected isDebugModeActive: boolean = false;
 
   constructor(key: string) {
@@ -109,6 +111,10 @@ export abstract class Service implements IService {
     return createResponse<boolean>(true);
   };
 
+  public injectServiceProvider = (serviceProvider: IServiceProvider) => {
+    this.serviceProvider = serviceProvider;
+  };
+
   public setDebugMode = (enabled: boolean) => {
     this.isDebugModeActive = enabled;
   };
@@ -126,5 +132,32 @@ export abstract class Service implements IService {
 
     // Execute callbacks
     this.onChangesSubscribers.forEach(callbackHandler => callbackHandler(this.version, reason, this.key));
+  };
+
+  protected resolveNotStartingResponse = (reason: string) => {
+
+    var displayKey = "services.service.notstarting";
+    var displayValue = `Service '${this.key}' cannot be started.`;
+    var logMessage = `${displayValue} ${reason}`;
+    this.logger.error(logMessage);
+
+    var response: IResponse<boolean> = {
+      state: ResponseStateEnumeration.Error,
+      messageStack: [{
+        display: {
+          key: displayKey,
+          keyNamespace: LocalizationNamespaces.System,
+          value: displayValue,
+          dynamicValueDictionary: {
+            "serviceName": this.key,
+          }
+        },
+        context: this.key,
+        logText: logMessage
+      }],
+      payload: false
+    }
+
+    return response;
   };
 }

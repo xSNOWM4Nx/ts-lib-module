@@ -31,8 +31,8 @@
     "devbuild_react-flight-tracker": "npm.cmd run compile && npm.cmd run copy:packagedata && npm.cmd run copy2:react-flight-tracker",
     "copy:packagedata": "copyfiles package.json README.md build/src",
     "copy:styles": "copyfiles -u 1 src/styles/* build/src",
-    "copy2:react-lib-module": "copyfiles -u 2 build/src/**/* ./../react-lib-module/node_modules/@daniel.neuweiler/ts-lib-module",
-    "copy2:react-flight-tracker": "copyfiles -u 2 build/src/**/* ./../react-flight-tracker/node_modules/@daniel.neuweiler/ts-lib-module"
+    "copy2:react-lib-module": "copyfiles build/src/**/* ./../react-lib-module/node_modules/@daniel.neuweiler/ts-lib-module",
+    "copy2:react-flight-tracker": "copyfiles build/src/**/* ./../react-flight-tracker/node_modules/@daniel.neuweiler/ts-lib-module"
   },
   "devDependencies": {
     "gts": "^1.1.2",
