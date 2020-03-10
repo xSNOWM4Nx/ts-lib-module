@@ -13,7 +13,6 @@ export interface IServiceProvider {
   getService: <T extends IService>(serviceKey: string) => T | undefined;
   startServices: () => Promise<boolean>;
   stopServices: () => Promise<boolean>;
-  setAuthenticationToken: (token: string) => void;
 }
 
 const ServiceDictionary: IServiceDictionary = {
@@ -96,10 +95,5 @@ export class ServiceProvider implements IServiceProvider {
       this.logger.info(`All services stopped.`);
 
     return failedServices.length === 0;
-  };
-
-  public setAuthenticationToken = (token: string) => {
-
-    Object.entries(this.serviceDictionary).forEach(([key, value]) => value.setAuthenticationToken(token));
   };
 }

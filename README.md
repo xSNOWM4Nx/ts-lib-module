@@ -7,8 +7,8 @@ This project represents my standard library for generic type definitions and pat
 [![Code Style: Google](https://img.shields.io/badge/code%20style-google-blueviolet.svg)](https://github.com/google/gts)
 
 ## Packages 📦:
-- gts
-- typescript
+- [gts](https://github.com/google/gts)
+- [TypeScript](https://github.com/microsoft/TypeScript)
 
 ## Features 🔮:
 - Types: Type definitions for various applications (REST, I18n, etc.)

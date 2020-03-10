@@ -17,9 +17,9 @@ export interface IService {
   description: ILocalizableContent;
   start: () => Promise<IResponse<boolean>>;
   stop: () => Promise<IResponse<boolean>>;
-  setAuthenticationToken: (token: string) => void;
   onChanges: (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => IResponse<boolean>;
   offChanges: (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => IResponse<boolean>;
+  setDebugMode: (enabled: boolean) => void;
 }
 
 export abstract class Service implements IService {
@@ -34,7 +34,7 @@ export abstract class Service implements IService {
   private version: number;
   private onChangesSubscribers: Array<(version: number, reason: string, serviceKey: string) => void>;
   protected logger: ILogger;
-  protected authenticationToken: string;
+  protected isDebugModeActive: boolean = false;
 
   constructor(key: string) {
 
@@ -57,7 +57,6 @@ export abstract class Service implements IService {
 
     this.onChangesSubscribers = [];
     this.logger = LogProvider.getLogger(key);
-    this.authenticationToken = '';
   };
 
   public async start() {
@@ -80,12 +79,6 @@ export abstract class Service implements IService {
     this.updateState(ServiceStateEnumeration.Stopped);
 
     return createResponse<boolean>(true);
-  };
-
-  public setAuthenticationToken(token: string) {
-
-    this.logger.info(`A new authentication token was transferred.`);
-    this.authenticationToken = token;
   };
 
   public onChanges = (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => {
@@ -114,6 +107,10 @@ export abstract class Service implements IService {
     this.logger.debug(`'${this.onChangesSubscribers.length}' subscribers for 'Changes'.`);
 
     return createResponse<boolean>(true);
+  };
+
+  public setDebugMode = (enabled: boolean) => {
+    this.isDebugModeActive = enabled;
   };
 
   protected updateState = (state: ServiceStateEnumeration) => {

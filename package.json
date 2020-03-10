@@ -15,15 +15,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "check": "gts check",
     "clean": "gts clean",
-    "compile": "tsc -p .",
+    "compile": "tsc -p . && npm.cmd run copy:packagedata && npm.cmd run copy:styles",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
     "posttest": "npm.cmd run check",
-    "devcompile": "npm.cmd run compile && npm.cmd run copy:packagedata && npm.cmd run copy2:react-lib-module && npm.cmd run copy2:react-sky-map",
+    "devcompile": "npm.cmd run compile && npm.cmd run copy2:react-lib-module && npm.cmd run copy2:react-sky-map",
     "copy:packagedata": "copyfiles package.json README.md build/src",
+    "copy:styles": "copyfiles -u 1 src/styles/* build/src",
     "copy2:react-lib-module": "copyfiles -u 2 build/src/**/* ./../react-lib-module/node_modules/@mymodules/ts-lib-module",
-    "copy2:react-sky-map": "copyfiles -u 2 build/src/**/* ./../react-sky-map/node_modules/@mymodules/ts-lib-module"
+    "copy2:react-sky-map": "copyfiles -u 2 build/src/**/* ./../react-flight-tracker/node_modules/@mymodules/ts-lib-module"
   },
   "devDependencies": {
     "gts": "^1.1.2",
