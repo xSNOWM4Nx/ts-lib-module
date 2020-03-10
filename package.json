@@ -1,10 +1,11 @@
 {
-  "name": "ts-lib-module",
-  "version": "0.1.0",
-  "description": "",
-  "author": "xSNOWM4Nx",
+  "name": "@danielneuweiler/ts-lib-module",
+  "version": "0.1.0-alpha.1",
+  "description": "This project represents my standard library for generic type definitions and patterns that I use in various other projects.",
+  "author": "Daniel Neuweiler",
   "license": "MIT",
   "repository": "xSNOWM4Nx/ts-lib-module",
+  "homepage": "https://github.com/xSNOWM4Nx/ts-lib-module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "files": [
@@ -23,8 +24,8 @@
     "devcompile": "npm.cmd run compile && npm.cmd run copy2:react-lib-module && npm.cmd run copy2:react-sky-map",
     "copy:packagedata": "copyfiles package.json README.md build/src",
     "copy:styles": "copyfiles -u 1 src/styles/* build/src",
-    "copy2:react-lib-module": "copyfiles -u 2 build/src/**/* ./../react-lib-module/node_modules/@mymodules/ts-lib-module",
-    "copy2:react-sky-map": "copyfiles -u 2 build/src/**/* ./../react-flight-tracker/node_modules/@mymodules/ts-lib-module"
+    "copy2:react-lib-module": "copyfiles -u 2 build/src/**/* ./../react-lib-module/node_modules/@danielneuweiler/ts-lib-module",
+    "copy2:react-sky-map": "copyfiles -u 2 build/src/**/* ./../react-flight-tracker/node_modules/@danielneuweiler/ts-lib-module"
   },
   "devDependencies": {
     "gts": "^1.1.2",
