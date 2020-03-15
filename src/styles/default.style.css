@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-size: 100%; /* 62.5% of 16px = 10px */
+  font-size: 62.5%; /* 62.5% of 16px = 10px */
   font-family: Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
