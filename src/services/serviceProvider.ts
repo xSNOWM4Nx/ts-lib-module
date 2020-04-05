@@ -1,5 +1,6 @@
 import { IService, Service } from './abstractions';
 import { ServiceKeys } from './constants';
+import { NavigationService } from './navigationService';
 import { RESTService } from './restService';
 import { LogProvider, ILogger } from './../logging';
 import { IResponse, ResponseStateEnumeration } from './../communication';
@@ -16,6 +17,7 @@ export interface IServiceProvider {
 }
 
 const ServiceDictionary: IServiceDictionary = {
+  [ServiceKeys.NavigationService]: new NavigationService(ServiceKeys.NavigationService),
   [ServiceKeys.RESTService]: new RESTService(ServiceKeys.RESTService),
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@daniel.neuweiler/ts-lib-module",
-  "version": "0.1.0-alpha.7",
+  "version": "0.1.0-alpha.8",
   "description": "This project represents my standard library for generic type definitions and patterns that I use in various other projects.",
   "author": "Daniel Neuweiler",
   "license": "MIT",
