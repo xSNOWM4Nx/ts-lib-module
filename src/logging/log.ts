@@ -2,6 +2,7 @@ import { LogProvider } from './LogProvider';
 
 export enum LogLevelEnumeration {
   Info,
+  UserAction,
   Debug,
   Warning,
   Error,
@@ -22,6 +23,7 @@ export interface ILogger {
   isActive: boolean;
   isDebugLogActive: boolean;
   info: (message: string, context?: string) => void;
+  userAction: (message: string, context?: string) => void;
   debug: (message: string, context?: string) => void;
   warning: (message: string, context?: string) => void;
   error: (message: string, context?: string) => void;
@@ -54,6 +56,23 @@ export class Logger implements ILogger {
       prefix: this.prefix,
       loggerKey: this.key,
       level: LogLevelEnumeration.Info,
+      timeStamp: Date.now()
+    }
+
+    this.archiveLog(log);
+  };
+
+  public userAction = (message: string, context?: string) => {
+
+    if (!this.isActive)
+      return;
+
+    var log: ILog = {
+      message: message,
+      context: context ? context : this.key,
+      prefix: this.prefix,
+      loggerKey: this.key,
+      level: LogLevelEnumeration.UserAction,
       timeStamp: Date.now()
     }
 

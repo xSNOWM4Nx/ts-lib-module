@@ -1,4 +1,5 @@
 # ts-lib-module
+## 🚧 This Repo is under Construction 🚧
 An open-source project written in TypeScript.
 
 This project represents my standard library for generic type definitions and patterns that I use in various other projects. It can be obtained from [npm](https://www.npmjs.com/package/@daniel.neuweiler/ts-lib-module) or distributed as a development package with the scripts.
@@ -15,7 +16,8 @@ This project represents my standard library for generic type definitions and pat
 
 ## 🔮 Features:
 - Type definitions for various applications (REST, I18n, etc.) and functions.
-- Inject a service (REST, Notification etc.) whenever it is needed.
+- Inject system services (REST, Navigation etc.) whenever it is needed.
+- Create and inject custom services.
 - Create a log unit and archive the logs.
 - Provides basic CSS styles.
 

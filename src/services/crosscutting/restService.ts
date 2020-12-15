@@ -1,6 +1,6 @@
-import { IService, Service } from './abstractions';
-import { IResponse, ResponseStateEnumeration } from './../communication';
-import { LocalizationNamespaces } from './../i18n';
+import { IService, Service } from '../abstractions';
+import { IResponse, createResponse, ResponseStateEnumeration } from '../../communication';
+import { LocalizationNamespaces } from '../../i18n';
 
 export interface IRESTService extends IService {
   get: <T>(url: string, init?: RequestInit) => Promise<IResponse<T>>;
@@ -52,6 +52,14 @@ export class RESTService extends Service implements IRESTService {
     this.authorizationHeader = authorizationHeader;
   };
 
+  protected async onStarting(): Promise<IResponse<boolean>> {
+    return createResponse<boolean>(true, ResponseStateEnumeration.OK, []);
+  };
+
+  protected async onStopping(): Promise<IResponse<boolean>> {
+    return createResponse<boolean>(true, ResponseStateEnumeration.OK, []);
+  };
+
   private getHeaders = (data?: Object | number | string) => {
 
     var headers = new Headers();
@@ -59,7 +67,7 @@ export class RESTService extends Service implements IRESTService {
     // We only accept json as payload
     headers.set('Accept', 'application/json');
 
-    // We can usediffrent authorizations. `Bearer TOKEN`, `Basic USERNAME:PASSWORD`, etc.
+    // We can use diffrent authorizations. `Bearer TOKEN`, `Basic USERNAME:PASSWORD`, etc.
     if (this.authorizationHeader !== '')
       headers.set('Authorization', this.authorizationHeader);
 

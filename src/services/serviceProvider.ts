@@ -1,11 +1,7 @@
 import { IService, Service } from './abstractions';
-import { ServiceKeys } from './constants';
-import { NavigationService } from './navigationService';
-import { RESTService } from './restService';
+import { IServiceDictionary, ServiceDictionary } from './serviceDictionary';
 import { LogProvider, ILogger } from './../logging';
 import { IResponse, ResponseStateEnumeration } from './../communication';
-
-export interface IServiceDictionary { [key: string]: IService };
 
 export interface IServiceProvider {
   key: string;
@@ -14,11 +10,6 @@ export interface IServiceProvider {
   getService: <T extends IService>(serviceKey: string) => T | undefined;
   startServices: () => Promise<boolean>;
   stopServices: () => Promise<boolean>;
-}
-
-const ServiceDictionary: IServiceDictionary = {
-  [ServiceKeys.NavigationService]: new NavigationService(ServiceKeys.NavigationService),
-  [ServiceKeys.RESTService]: new RESTService(ServiceKeys.RESTService),
 }
 
 export class ServiceProvider implements IServiceProvider {
@@ -37,7 +28,7 @@ export class ServiceProvider implements IServiceProvider {
 
     // Get the logger
     this.logger = LogProvider.getLogger(this.key);
-  }
+  };
 
   public addService = <T extends IService>(service: T, serviceKey: string) => {
 

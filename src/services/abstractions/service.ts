@@ -1,7 +1,12 @@
 import { LogProvider, ILogger } from './../../logging';
 import { ILocalizableContent, LocalizationNamespaces } from './../../i18n';
-import { IResponse, ResponseStateEnumeration, createResponse } from './../../communication';
+import { IResponse, ResponseStateEnumeration } from './../../communication';
 import { IServiceProvider } from './../serviceProvider';
+
+export interface IServiceKeySubscriptionDictionary { [key: string]: string };
+
+export type ChangesCallbackMethod = (version: number, reason: string, serviceKey: string) => void;
+interface IChangesSubscriberDictionary { [key: string]: ChangesCallbackMethod };
 
 export enum ServiceStateEnumeration {
   Unknown,
@@ -18,8 +23,8 @@ export interface IService {
   description: ILocalizableContent;
   start: () => Promise<IResponse<boolean>>;
   stop: () => Promise<IResponse<boolean>>;
-  onChanges: (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => IResponse<boolean>;
-  offChanges: (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => IResponse<boolean>;
+  onChanges: (contextKey: string, callbackHandler: ChangesCallbackMethod) => string;
+  offChanges: (registerKey: string) => boolean;
   setDebugMode: (enabled: boolean) => void;
 }
 
@@ -32,8 +37,9 @@ export abstract class Service implements IService {
   public state: ServiceStateEnumeration;
 
   // Props
-  private version: number;
-  private onChangesSubscribers: Array<(version: number, reason: string, serviceKey: string) => void>;
+  private version: number = 0;
+  private changesSubscriberDictionary: IChangesSubscriberDictionary = {};
+  private changesSubscriptionCounter: number = 0;
   protected logger: ILogger;
   protected serviceProvider?: IServiceProvider;
   protected isDebugModeActive: boolean = false;
@@ -55,60 +61,89 @@ export abstract class Service implements IService {
     };
 
     this.state = ServiceStateEnumeration.Unknown;
-    this.version = 0;
-
-    this.onChangesSubscribers = [];
     this.logger = LogProvider.getLogger(key);
   };
 
   public async start() {
 
+    this.logger.info(`Starting '${this.key}'.`);
+
     // Init fields
-    this.onChangesSubscribers = [];
+    this.changesSubscriberDictionary = {};
 
-    this.logger.info(`'${this.key}' is running.`);
-    this.updateState(ServiceStateEnumeration.Running);
+    var onStartingResponse = await this.onStarting();
+    if (onStartingResponse.state === ResponseStateEnumeration.OK) {
 
-    return createResponse<boolean>(true);
+      this.logger.info(`'${this.key}' is running.`);
+      this.updateState(ServiceStateEnumeration.Running);
+    }
+    else {
+
+      this.logger.error(`'${this.key}' could not be started.`);
+      this.updateState(ServiceStateEnumeration.Error);
+    }
+
+    return onStartingResponse;
   };
 
   public async stop() {
 
+    this.logger.info(`Stopping '${this.key}'.`);
+
+    var onStoppingResponse = await this.onStopping();
+    if (onStoppingResponse.state === ResponseStateEnumeration.OK) {
+
+      this.logger.info(`'${this.key}' is stopped.`);
+      this.updateState(ServiceStateEnumeration.Stopped);
+    }
+    else {
+
+      this.logger.error(`'${this.key}' could not be stopped.`);
+      this.updateState(ServiceStateEnumeration.Error);
+    }
+
     // Dispose fields
-    this.onChangesSubscribers = [];
+    this.changesSubscriberDictionary = {};
 
-    this.logger.info(`${this.key} has stopped.`);
-    this.updateState(ServiceStateEnumeration.Stopped);
-
-    return createResponse<boolean>(true);
+    return onStoppingResponse;
   };
 
-  public onChanges = (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => {
+  public onChanges = (contextKey: string, callbackHandler: ChangesCallbackMethod) => {
 
-    // Check if the callback handler is already registred, otherwise it will be added
-    var index = this.onChangesSubscribers.indexOf(callbackHandler);
-    if (index < 0)
-      this.onChangesSubscribers.push(callbackHandler);
+    // Setup register key
+    this.changesSubscriptionCounter++;
+    const registerKey = `${contextKey}_${this.changesSubscriptionCounter}`
 
-    this.logger.debug(`'${caller}' has subscribed for 'Changes'.`);
-    this.logger.debug(`'${this.onChangesSubscribers.length}' subscribers for 'Changes'.`);
+    // Register callback
+    this.changesSubscriberDictionary[registerKey] = callbackHandler;
+    this.logger.debug(`Component with key '${registerKey}' has subscribed on 'Changes'.`);
+    this.logger.debug(`'${Object.entries(this.changesSubscriberDictionary).length}' subscribers on 'Changes'.`);
 
     // Execute the callback to update the handler immediately
-    callbackHandler(this.version, 'Successfully registred', this.key);
+    callbackHandler(this.version, 'Subscription successfully', this.key);
 
-    return createResponse<boolean>(true);
+    return registerKey;
   };
 
-  public offChanges = (caller: string, callbackHandler: (version: number, reason: string, serviceKey: string) => void) => {
+  public offChanges = (registerKey: string) => {
 
-    var index = this.onChangesSubscribers.indexOf(callbackHandler);
-    if (index >= 0)
-      this.onChangesSubscribers.splice(index, 1);
+    // Delete callback
+    var existingSubscriber = Object.entries(this.changesSubscriberDictionary).find(([key, value]) => key === registerKey);
+    if (existingSubscriber) {
 
-    this.logger.debug(`'${caller}' has unsubscribed for 'Changes'.`);
-    this.logger.debug(`'${this.onChangesSubscribers.length}' subscribers for 'Changes'.`);
+      delete this.changesSubscriberDictionary[registerKey];
+      this.logger.debug(`Component with key '${registerKey}' has unsubscribed on 'Changes'.`);
+      this.logger.debug(`'${Object.entries(this.changesSubscriberDictionary).length}' subscribers on 'Changes'.`);
 
-    return createResponse<boolean>(true);
+      return true;
+    }
+    else {
+
+      this.logger.error(`Component with key '${registerKey}' not registered on 'Changes'.`);
+      this.logger.debug(`'${Object.entries(this.changesSubscriberDictionary).length}' subscribers on 'Changes'.`);
+
+      return false;
+    }
   };
 
   public injectServiceProvider = (serviceProvider: IServiceProvider) => {
@@ -118,6 +153,10 @@ export abstract class Service implements IService {
   public setDebugMode = (enabled: boolean) => {
     this.isDebugModeActive = enabled;
   };
+
+  protected abstract onStopping(): Promise<IResponse<boolean>>;
+
+  protected abstract onStarting(): Promise<IResponse<boolean>>;
 
   protected updateState = (state: ServiceStateEnumeration) => {
 
@@ -131,33 +170,6 @@ export abstract class Service implements IService {
     this.logger.debug(`Version has been updated to '${this.version}'. ${reason}`);
 
     // Execute callbacks
-    this.onChangesSubscribers.forEach(callbackHandler => callbackHandler(this.version, reason, this.key));
+    Object.entries(this.changesSubscriberDictionary).forEach(([key, value], index) => value(this.version, reason, this.key));
   };
-
-  protected resolveNotStartingResponse = (reason: string) => {
-
-    var displayKey = "services.service.notstarting";
-    var displayValue = `Service '${this.key}' cannot be started.`;
-    var logMessage = `${displayValue} ${reason}`;
-    this.logger.error(logMessage);
-
-    var response: IResponse<boolean> = {
-      state: ResponseStateEnumeration.Error,
-      messageStack: [{
-        display: {
-          key: displayKey,
-          keyNamespace: LocalizationNamespaces.System,
-          value: displayValue,
-          dynamicValueDictionary: {
-            "serviceName": this.key,
-          }
-        },
-        context: this.key,
-        logText: logMessage
-      }],
-      payload: false
-    }
-
-    return response;
-  };
-}
+};
