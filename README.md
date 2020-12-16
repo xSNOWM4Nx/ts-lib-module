@@ -1,5 +1,4 @@
 # ts-lib-module
-## 🚧 This Repo is under Construction 🚧
 An open-source project written in TypeScript.
 
 This project represents my standard library for generic type definitions and patterns that I use in various other projects. It can be obtained from [npm](https://www.npmjs.com/package/@daniel.neuweiler/ts-lib-module) or distributed as a development package with the scripts.

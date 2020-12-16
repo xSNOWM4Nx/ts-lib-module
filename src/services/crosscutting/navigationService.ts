@@ -8,7 +8,7 @@ interface INavigationRequestSubscriberDictionary { [key: string]: NavigationRequ
 
 export interface INavigationService extends IService {
   history: Array<INavigationRequest>;
-  show: (key: string, url?: string, type?: NavigationTypeEnumeration) => void;
+  show: (key: string, type: NavigationTypeEnumeration, url?: string) => void;
   onNavigationRequest: (contextKey: string, callbackHandler: NavigationRequestCallbackMethod) => string;
   offNavigationRequest: (registerKey: string) => boolean;
 };
@@ -39,7 +39,7 @@ export class NavigationService extends Service implements INavigationService {
     };
   };
 
-  public show = (key: string, url?: string, type?: NavigationTypeEnumeration) => {
+  public show = (key: string, type: NavigationTypeEnumeration, url?: string) => {
 
     var navigationRequest: INavigationRequest = {
       key: key,

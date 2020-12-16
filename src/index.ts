@@ -5,3 +5,4 @@ export * from './logging';
 export * from './navigation';
 export * from './selection';
 export * from './services';
+export * from './styles';

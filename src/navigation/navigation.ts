@@ -11,7 +11,7 @@ export interface INavigationElementBase extends ISelectableBase {
 
 export interface INavigationRequest {
   key: string;
-  type?: NavigationTypeEnumeration;
+  type: NavigationTypeEnumeration;
   url?: string;
   timeStamp: number;
 }
