@@ -1,6 +1,6 @@
 {
   "name": "@daniel.neuweiler/ts-lib-module",
-  "version": "0.1.0-alpha.17",
+  "version": "0.1.0-alpha.18",
   "description": "This project represents my standard library for generic type definitions and patterns that I use in various other projects.",
   "author": "Daniel Neuweiler",
   "license": "MIT",
@@ -27,16 +27,11 @@
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
     "posttest": "npm.cmd run check",
-    "devbuild_react-lib-module": "npm.cmd run compile && npm.cmd run copy:packagedata && npm.cmd run copy2:react-lib-module",
-    "devbuild_react-flight-tracker": "npm.cmd run compile && npm.cmd run copy:packagedata && npm.cmd run copy2:react-flight-tracker",
-    "copy:packagedata": "copyfiles package.json README.md build/src",
-    "copy:styles": "copyfiles -u 1 src/styles/* build/src",
-    "copy2:react-lib-module": "copyfiles build/src/**/* ./../react-lib-module/node_modules/@daniel.neuweiler/ts-lib-module",
-    "copy2:react-flight-tracker": "copyfiles build/src/**/* ./../react-flight-tracker/node_modules/@daniel.neuweiler/ts-lib-module"
+    "copy:styles": "copyfiles -u 1 src/styles/* build/src"
   },
   "devDependencies": {
-    "gts": "^3.1.0",
-    "typescript": "^4.5.5",
-    "@types/node": "^17.0.15"
+    "gts": "^3.1.1",
+    "typescript": "^4.8.4",
+    "@types/node": "^18.8.2"
   }
 }

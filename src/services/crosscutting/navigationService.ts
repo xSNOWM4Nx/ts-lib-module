@@ -1,6 +1,6 @@
 import { IService, Service } from '../abstractions';
 import { IResponse, createResponse, ResponseStateEnumeration } from './../../communication';
-import { NavigationTypeEnumeration, INavigationRequest } from '../../navigation';
+import { INavigationElementBase, NavigationTypeEnumeration, INavigationRequest } from '../../navigation';
 import { LocalizationNamespaces } from '../../i18n';
 
 export type NavigationRequestCallbackMethod = (navigationRequest: INavigationRequest) => void;
@@ -8,7 +8,7 @@ interface INavigationRequestSubscriberDictionary { [key: string]: NavigationRequ
 
 export interface INavigationService extends IService {
   history: Array<INavigationRequest>;
-  show: (key: string, type: NavigationTypeEnumeration, url?: string) => void;
+  show: (navigationData: INavigationElementBase, url?: string) => void;
   onNavigationRequest: (contextKey: string, callbackHandler: NavigationRequestCallbackMethod) => string;
   offNavigationRequest: (registerKey: string) => boolean;
 };
@@ -39,11 +39,11 @@ export class NavigationService extends Service implements INavigationService {
     };
   };
 
-  public show = (key: string, type: NavigationTypeEnumeration, url?: string) => {
+  public show = (navigationData: INavigationElementBase, url?: string) => {
 
     var navigationRequest: INavigationRequest = {
-      key: key,
-      type: type,
+      key: navigationData.key,
+      type: navigationData.type ? navigationData.type : NavigationTypeEnumeration.View,
       url: url,
       timeStamp: Date.now()
     };

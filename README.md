@@ -20,8 +20,8 @@ This project represents my standard library for generic type definitions and pat
 - Create a log unit and archive the logs.
 - Provides basic CSS styles.
 
-## ⌨️ Development:
-- Use the "devbuild_XXX" script to deploy the package to the corresponding cloned repositories. The package is then stored under "*/node_modules/@daniel.neuweiler/ts-lib-module".
+<!-- ## ⌨️ Development:
+- Use the "devbuild_XXX" script to deploy the package to the corresponding cloned repositories. The package is then stored under "*/node_modules/@daniel.neuweiler/ts-lib-module". -->
 
 ## 📑 License:
 - MIT © [xSNOWM4Nx](https://github.com/xSNOWM4Nx)
