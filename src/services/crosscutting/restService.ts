@@ -101,9 +101,10 @@ export class RESTService extends Service implements IRESTService {
     return body;
   };
 
-  private getRequestInit = (init?: RequestInit) => {
+  private getRequestInit = (method: string, init?: RequestInit) => {
 
     var requestInit: RequestInit = {
+      method: method,               // *GET, POST, PUT, DELETE, etc.
       mode: "same-origin",          // no-cors, cors, *same-origin
       cache: "default",             // *default, no-cache, reload, force-cache, only-if-cached
       credentials: "same-origin",   // include, *same-origin, omit
@@ -129,7 +130,7 @@ export class RESTService extends Service implements IRESTService {
     var responseStatus = 0;
     var responseStatusText = '';
 
-    var requestInit = this.getRequestInit(init);
+    var requestInit = this.getRequestInit(method, init);
     var headers = this.getHeaders(data);
     var body = this.getBody(data);
     requestInit.headers = headers;
@@ -153,7 +154,8 @@ export class RESTService extends Service implements IRESTService {
         else
           return response.text();
 
-      }).then((responseObject) => {
+      })
+      .then((responseObject) => {
 
         // Setup the response object
         var responseData: IResponse<T> = {
@@ -231,6 +233,16 @@ export class RESTService extends Service implements IRESTService {
           state: responseData.state,
           messageStack: responseData.messageStack,
           payload: responseData.payload,
+        };
+
+        return response;
+      })
+      .catch((reason: any) => {
+
+        // Setup the response object
+        var response: IResponse<T> = {
+          state: ResponseStateEnumeration.Error,
+          messageStack: []
         };
 
         return response;
